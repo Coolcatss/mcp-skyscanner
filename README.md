@@ -28,8 +28,8 @@ An MCP (Model Context Protocol) server that exposes Skyscanner flight and airpor
 
 ```bash
 # Clone with submodules (recommended)
-git clone --recursive https://github.com/YOUR_USERNAME/skyscanner-mcp.git
-cd skyscanner-mcp
+git clone --recursive https://github.com/shadyvb/mcp-skyscanner.git
+cd mcp-skyscanner
 ```
 
 **If you already cloned without submodules:**
@@ -150,7 +150,7 @@ Claude: I'll search for flights from London Heathrow (LHR) to New York JFK on De
 
 I found several flight options:
 - Best: 8 options available
-- Cheapest: 8 options available  
+- Cheapest: 8 options available
 - Fastest: 8 options available
 - Direct: 3 non-stop options available
 
