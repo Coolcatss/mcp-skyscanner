@@ -2,6 +2,16 @@
 
 An MCP (Model Context Protocol) server that exposes Skyscanner flight and airport search functionality to AI assistants like Claude Desktop and Cursor.
 
+## ⚠️ Disclaimer
+
+**This project is experimental and intended for educational purposes only.**
+
+- This software is provided "as is" without any warranties
+- **Not intended for commercial use** - Do not use this software in any commercial or production environment
+- The Skyscanner API client library used here is reverse-engineered and may violate Skyscanner's Terms of Service
+- Use at your own risk - The authors are not responsible for any consequences of using this software
+- This project is for learning and experimentation with MCP servers and API integration
+
 ## Features
 
 - ✈️ **Flight Search** - Search for flights between airports with flexible date options
@@ -182,6 +192,12 @@ The server returns structured error responses:
 
 GPL-3.0
 
+**Important:** This license applies to the MCP server code only. The Skyscanner API client library (`vendor/skyscanner`) has its own license terms. Please review the license of the upstream repository before use.
+
 ## Credits
 
 - Skyscanner API client: [irrisolto/skyscanner](https://github.com/irrisolto/skyscanner)
+
+## Disclaimer (Reminder)
+
+This project is experimental and for educational purposes only. It is not intended for commercial use. Use at your own risk.
