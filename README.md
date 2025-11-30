@@ -68,7 +68,7 @@ The `mcp_server.py` automatically adds the `vendor/skyscanner` submodule to the 
   "mcpServers": {
     "skyscanner": {
       "command": "python3",
-      "args": ["/absolute/path/to/skyscanner-mcp/mcp_server.py"],
+      "args": ["/absolute/path/to/mcp-skyscanner/mcp_server.py"],
       "env": {
         "SKYSCANNER_LOCALE": "en-US",
         "SKYSCANNER_CURRENCY": "USD",
@@ -80,7 +80,7 @@ The `mcp_server.py` automatically adds the `vendor/skyscanner` submodule to the 
 ```
 
    **Important notes:**
-   - Replace `/absolute/path/to/skyscanner-mcp/mcp_server.py` with the **absolute path** to your `mcp_server.py` file
+   - Replace `/absolute/path/to/mcp-skyscanner/mcp_server.py` with the **absolute path** to your `mcp_server.py` file
    - Use `python3` instead of `python` on macOS/Linux
    - If using a virtual environment, use the full path to Python (e.g., `/path/to/venv/bin/python3`)
 
