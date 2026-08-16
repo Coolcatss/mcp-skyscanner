@@ -7,7 +7,7 @@ import datetime
 import os
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional, Union
 
 # Add vendor/skyscanner to Python path if submodule exists
 SCRIPT_DIR = Path(__file__).parent
@@ -63,6 +63,24 @@ def airport_to_dict(airport):
     }
 
 
+def captcha_error_response(details: Optional[str] = None) -> dict:
+    """Build the MCP error returned when Skyscanner requires a CAPTCHA."""
+    message = "Skyscanner blocked the request with CAPTCHA"
+    if details:
+        message = f"{message}: {details}"
+
+    return {
+        "error": "BannedWithCaptcha",
+        "message": message,
+        "suggestion": "Try again later or use a proxy"
+    }
+
+
+def is_missing_captcha_redirect_error(error: Exception) -> bool:
+    """Detect the KeyError raised for Skyscanner's current 403 response shape."""
+    return isinstance(error, KeyError) and error.args == ("redirect_to",)
+
+
 def search_airports_workaround(query: str, depart_date=None, return_date=None):
     """
     Wrapper around scanner.search_airports() to work around upstream bug.
@@ -85,7 +103,7 @@ def search_airports(
     query: str,
     depart_date: Optional[str] = None,
     return_date: Optional[str] = None
-) -> list[dict]:
+) -> Union[List[dict], dict]:
     """
     Search for airports by name, city, or IATA code.
 
@@ -117,11 +135,7 @@ def search_airports(
             "message": str(e)
         }
     except BannedWithCaptcha as e:
-        return {
-            "error": "BannedWithCaptcha",
-            "message": f"Skyscanner blocked the request with CAPTCHA: {str(e)}",
-            "suggestion": "Try again later or use a proxy"
-        }
+        return captcha_error_response(str(e))
     except GenericError as e:
         return {
             "error": "GenericError",
@@ -129,6 +143,8 @@ def search_airports(
             "details": "This might be due to invalid date format or API restrictions. Check that dates are in YYYY-MM-DD format and in the future."
         }
     except Exception as e:
+        if is_missing_captcha_redirect_error(e):
+            return captcha_error_response()
         return {
             "error": "UnknownError",
             "message": f"Unexpected error: {str(e)}",
@@ -254,11 +270,7 @@ def search_flights(
             "message": error_msg
         }
     except BannedWithCaptcha as e:
-        return {
-            "error": "BannedWithCaptcha",
-            "message": f"Skyscanner blocked the request with CAPTCHA: {str(e)}",
-            "suggestion": "Try again later or use a proxy"
-        }
+        return captcha_error_response(str(e))
     except AttemptsExhaustedIncompleteResponse:
         return {
             "error": "Timeout",
@@ -280,6 +292,8 @@ def search_flights(
             "details": "This might be due to API restrictions or invalid parameters"
         }
     except Exception as e:
+        if is_missing_captcha_redirect_error(e):
+            return captcha_error_response()
         return {
             "error": "UnknownError",
             "message": f"Unexpected error: {str(e)}",
@@ -289,4 +303,3 @@ def search_flights(
 
 if __name__ == "__main__":
     mcp.run()
-
