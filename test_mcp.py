@@ -26,7 +26,7 @@ except ImportError:
         sys.exit(1)
 
 # Import the underlying functions and scanner
-from mcp_server import mcp, scanner, parse_iso_date, airport_to_dict, search_airports_workaround
+from mcp_server import mcp, get_scanner, parse_iso_date, airport_to_dict, search_airports_workaround
 from skyscanner.types import CabinClass
 
 def test_airport_search():
@@ -114,7 +114,7 @@ def test_flight_search(origin_code, dest_code):
         depart_dt = parse_iso_date("2025-12-22")
 
         # Search flights
-        response = scanner.get_flight_prices(
+        response = get_scanner().get_flight_prices(
             origin=origin,
             destination=destination,
             depart_date=depart_dt,

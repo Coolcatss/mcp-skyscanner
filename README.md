@@ -21,7 +21,7 @@ An MCP (Model Context Protocol) server that exposes Skyscanner flight and airpor
 
 ### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - Git (for submodule support)
 
 ### Step 1: Clone the Repository

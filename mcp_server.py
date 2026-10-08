@@ -23,12 +23,24 @@ from skyscanner.errors import BannedWithCaptcha, AttemptsExhaustedIncompleteResp
 # Initialize FastMCP server
 mcp = FastMCP("Skyscanner MCP Server")
 
-# Initialize Skyscanner client with configurable parameters
-scanner = SkyScanner(
-    locale=os.getenv("SKYSCANNER_LOCALE", "en-US"),
-    currency=os.getenv("SKYSCANNER_CURRENCY", "USD"),
-    market=os.getenv("SKYSCANNER_MARKET", "US"),
-)
+_scanner: Optional[SkyScanner] = None
+
+
+def get_scanner() -> SkyScanner:
+    """Create the Skyscanner client on first use.
+
+    The client does network requests while being constructed. Doing that lazily keeps the
+    MCP server startable (and its tools listable) even when Skyscanner is unreachable;
+    errors then surface as structured tool results instead of crashing the server.
+    """
+    global _scanner
+    if _scanner is None:
+        _scanner = SkyScanner(
+            locale=os.getenv("SKYSCANNER_LOCALE", "en-US"),
+            currency=os.getenv("SKYSCANNER_CURRENCY", "USD"),
+            market=os.getenv("SKYSCANNER_MARKET", "US"),
+        )
+    return _scanner
 
 
 def parse_iso_date(date_str: Optional[str]) -> Optional[datetime.datetime]:
@@ -83,7 +95,7 @@ def is_missing_captcha_redirect_error(error: Exception) -> bool:
 
 def search_airports_workaround(query: str, depart_date=None, return_date=None):
     """
-    Wrapper around scanner.search_airports() to work around upstream bug.
+    Wrapper around get_scanner().search_airports() to work around upstream bug.
 
     The upstream library has a bug where it sends empty strings for dates when None,
     which the API rejects. This wrapper always provides dates (defaults to future date).
@@ -95,7 +107,7 @@ def search_airports_workaround(query: str, depart_date=None, return_date=None):
     if not return_date:
         return_date = datetime.datetime.now() + datetime.timedelta(days=67)
 
-    return scanner.search_airports(query, depart_date=depart_date, return_date=return_date)
+    return get_scanner().search_airports(query, depart_date=depart_date, return_date=return_date)
 
 
 @mcp.tool
@@ -234,7 +246,7 @@ def search_flights(
         cabin_enum = cabin_map.get(cabin_class.lower(), CabinClass.ECONOMY)
 
         # Perform flight search
-        response = scanner.get_flight_prices(
+        response = get_scanner().get_flight_prices(
             origin=origin,
             destination=destination,
             depart_date=depart_dt,

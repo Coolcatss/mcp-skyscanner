@@ -3,5 +3,8 @@ curl_cffi
 typeguard
 orjson
 
+# Dev/test
+pytest
+
 # Note: skyscanner-api is included as a git submodule in vendor/skyscanner
 # The mcp_server.py automatically adds it to the Python path
